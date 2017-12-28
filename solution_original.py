@@ -1,12 +1,6 @@
 
-# coding: utf-8
-
-# In[46]:
-
 from utils import *
 
-
-# In[47]:
 
 row_units = [cross(r, cols) for r in rows]
 column_units = [cross(rows, c) for c in cols]
@@ -14,15 +8,11 @@ square_units = [cross(rs, cs) for rs in ('ABC','DEF','GHI') for cs in ('123','45
 unitlist = row_units + column_units + square_units
 
 # TODO: Update the unit list to add the new diagonal units
-diagonal_units_ltr = [[rows[i]+cols[i] for i in range(9)]]
-diagonal_units_rtl = [[rows[-(i+1)]+cols[i] for i in range(9)]]
-unitlist = unitlist + diagonal_units_ltr + diagonal_units_rtl
+unitlist = unitlist
 
 units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
 peers = dict((s, set(sum(units[s],[]))-set([s])) for s in boxes)
 
-
-# In[81]:
 
 def naked_twins(values):
     """Eliminate values using the naked twins strategy.
@@ -51,23 +41,9 @@ def naked_twins(values):
     and because it is simpler (since the reduce_puzzle function already calls this
     strategy repeatedly).
     """
+    # TODO: Implement this function!
+    raise NotImplementedError
 
-    for unit in unitlist:
-        naked_twins = sorted([sorted([box_a, box_b]) for box_a in unit for box_b in unit if values[box_a] == values[box_b] and len(values[box_a]) == 2 and box_a != box_b])
-        # because there are duplicates in the list, take every other index
-        naked_twins = [naked_twins[i] for i in range(0,len(naked_twins),2)]
-        if naked_twins != []:
-            for pair in naked_twins:
-                digits = values[pair[0]]
-                for box in unit:
-                    if box not in pair:
-                        values[box] = values[box].replace(digits[0], "")
-                        values[box] = values[box].replace(digits[1], "")
-
-    return values
-
-
-# In[49]:
 
 def eliminate(values):
     """Apply the eliminate strategy to a Sudoku puzzle
@@ -85,14 +61,9 @@ def eliminate(values):
     dict
         The values dictionary with the assigned values eliminated from peers
     """
-    for box, value in values.items():
-        if len(value) == 1:
-            for peer in peers[box]:
-                values[peer] = values[peer].replace(value, "")
-    return values
+    # TODO: Copy your code from the classroom to complete this function
+    raise NotImplementedError
 
-
-# In[50]:
 
 def only_choice(values):
     """Apply the only choice strategy to a Sudoku puzzle
@@ -114,15 +85,9 @@ def only_choice(values):
     -----
     You should be able to complete this function by copying your code from the classroom
     """
-    for unit in unitlist:
-        for digit in '123456789':
-            occurrences = [box for box in unit if digit in values[box]]
-            if len(occurrences) == 1:
-                values[occurrences[0]] = digit
-    return values
+    # TODO: Copy your code from the classroom to complete this function
+    raise NotImplementedError
 
-
-# In[51]:
 
 def reduce_puzzle(values):
     """Reduce a Sudoku puzzle by repeatedly applying all constraint strategies
@@ -138,21 +103,9 @@ def reduce_puzzle(values):
         The values dictionary after continued application of the constraint strategies
         no longer produces any changes, or False if the puzzle is unsolvable 
     """
-    solved_values = [box for box in values.keys() if len(values[box]) == 1]
-    stalled = False
-    while not stalled:
-        solved_values_before = len([box for box in values.keys() if len(values[box]) == 1])
-        values = eliminate(values)
-        values = only_choice(values)
-        values = naked_twins(values)
-        solved_values_after = len([box for box in values.keys() if len(values[box]) == 1])
-        stalled = solved_values_before == solved_values_after
-        if len([box for box in values.keys() if len(values[box]) == 0]):
-            return False
-    return values
+    # TODO: Copy your code from the classroom and modify it to complete this function
+    raise NotImplementedError
 
-
-# In[52]:
 
 def search(values):
     """Apply depth first search to solve Sudoku puzzles in order to solve puzzles
@@ -173,30 +126,9 @@ def search(values):
     You should be able to complete this function by copying your code from the classroom
     and extending it to call the naked twins strategy.
     """
-    # First, reduce the puzzle using the previous function
-    values = reduce_puzzle(values)
-    if values == False:
-        return False
-    if all(len(values[box]) == 1 for box in boxes):
-        return values
-    # Choose one of the unfilled squares with the fewest possibilities
-    min_val = 9
-    min_box = None
-    for box, value in values.items():
-        if 1 < len(value) < min_val:
-            min_val = len(value)
-            min_box = box
-    # Now use recursion to solve each one of the resulting sudokus, and if one returns a value (not False), return that answer!
-    for value in values[min_box]:
-        #try each value
-        search_values = values.copy()
-        search_values[min_box] = value
-        search_returned = search(search_values)
-        if search_returned:
-            return search_returned
+    # TODO: Copy your code from the classroom to complete this function
+    raise NotImplementedError
 
-
-# In[53]:
 
 def solve(grid):
     """Find the solution to a Sudoku puzzle using search and constraint propagation
@@ -218,25 +150,17 @@ def solve(grid):
     return values
 
 
-# In[82]:
-
 if __name__ == "__main__":
     diag_sudoku_grid = '2.............62....1....7...6..8...3...9...7...6..4...4....8....52.............3'
     display(grid2values(diag_sudoku_grid))
     result = solve(diag_sudoku_grid)
     display(result)
 
-#    try:
-#        import PySudoku
-#        PySudoku.play(grid2values(diag_sudoku_grid), result, history)
+    try:
+        import PySudoku
+        PySudoku.play(grid2values(diag_sudoku_grid), result, history)
 
-#    except SystemExit:
-#        pass
-#    except:
-#        print('We could not visualize your board due to a pygame issue. Not a problem! It is not a requirement.')
-
-
-# In[ ]:
-
-
-
+    except SystemExit:
+        pass
+    except:
+        print('We could not visualize your board due to a pygame issue. Not a problem! It is not a requirement.')
